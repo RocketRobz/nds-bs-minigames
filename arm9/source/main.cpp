@@ -29,6 +29,7 @@
 #include <unistd.h>
 
 #include "logo_rocketrobz.h"
+#include "title.h"
 
 int screenBrightness = 25;
 
@@ -103,6 +104,28 @@ int main(int argc, char **argv) {
 	fadeIn();
 	for (int i = 0; i < 60*2; i++) {
 		swiWaitForVBlank();
+	}
+	fadeOut();
+
+	// load compressed bitmap into bg3
+	decompress(titleBitmap, bgGetGfxPtr(bg3), LZ77Vram);
+
+	// apply the bg changes
+	bgUpdate();
+
+	fadeIn();
+	while(1) {
+		scanKeys();
+		int pressed = keysDown();
+
+		if (pressed & KEY_START) {
+			break;
+		}
+
+		if (pressed & KEY_B) {
+			fadeOut();
+			return 0;
+		}
 	}
 	fadeOut();
 
