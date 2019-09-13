@@ -29,9 +29,10 @@
 #include <unistd.h>
 
 int screenMode = 0;
+bool gamePaused = false;
 
-extern void pongGame(void);
-extern void ticTacToe(void);
+extern void pongGame(int pressed);
+extern void ticTacToe(int pressed);
 
 //---------------------------------------------------------------------------------
 void stop (void) {
@@ -49,10 +50,9 @@ int main(int argc, char **argv) {
 
 	defaultExceptionHandler();
 
-	// Subscreen as a console
-	videoSetModeSub(MODE_0_2D);
-	vramSetBankH(VRAM_H_SUB_BG);
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 15, 0, false, true);
+	REG_POWERCNT = (u16)(POWER_LCD | POWER_2D_A | POWER_SWAP_LCDS);
+	REG_DISPCNT = MODE_FB0;
+	VRAM_A_CR = VRAM_ENABLE;
 
 	/*videoSetMode(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
@@ -65,15 +65,23 @@ int main(int argc, char **argv) {
 	REG_BG3PD = 1<<8;*/
 
 	while(1) {
-		switch (screenMode) {
-			case 0:
-			default:
-				pongGame();
-				break;
-			case 1:
-				ticTacToe();
-				break;
+		scanKeys();
+		int pressed = keysDown();
+
+		if (!gamePaused) {
+			switch (screenMode) {
+				case 0:
+				default:
+					pongGame(pressed);
+					break;
+				case 1:
+					ticTacToe(pressed);
+					break;
+			}
 		}
+
+		if (pressed & KEY_START) gamePaused = !gamePaused;
+		if (pressed & KEY_B) break;
 
 		if (screenMode < 0) screenMode = 1;
 		else if (screenMode > 1) screenMode = 0;

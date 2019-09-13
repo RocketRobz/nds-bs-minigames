@@ -69,12 +69,8 @@ static void ttt_drawT(void) {
 	}
 }
 
-void ticTacToe(void) {
+void ticTacToe(int pressed) {
 	if (!drawnStuff) {
-		REG_POWERCNT = (u16)(POWER_LCD | POWER_2D_A | POWER_SWAP_LCDS);
-		REG_DISPCNT = MODE_FB0;
-		VRAM_A_CR = VRAM_ENABLE;
-
 		// Draw white BG
 		for (int i = 0; i < 256*192; i++) {
 			VRAM_A[i] = 0x7FFF;
@@ -121,9 +117,6 @@ void ticTacToe(void) {
 				VRAM_A[y*256+k] = 0x0000;
 			}
 		}
-
-		consoleClear();
-		iprintf("Tic-Tac-Toe\n");
 
 		drawnStuff = true;
 	}
@@ -198,9 +191,6 @@ void ticTacToe(void) {
 			}
 		}
 	}
-
-	scanKeys();
-	int pressed = keysDown();
 
 	// Control highlighter
 	if (pressed & KEY_UP) {
@@ -309,21 +299,13 @@ void ticTacToe(void) {
 		}
 	}
 
-	if (pressed & KEY_START) {
+	if (pressed & KEY_X) {
 		// Clear all marks
 		drawnStuff = false;
 		for (int i = 0; i < 9; i++) ttt_selected[i] = 0;
 	}
 
-	if (pressed & KEY_L) {
-		screenMode--;
-
-		// Clear all marks
-		drawnStuff = false;
-		for (int i = 0; i < 9; i++) ttt_selected[i] = 0;
-
-		drawnStuff = false;
-	} else if (pressed & KEY_R) {
+	if (pressed & KEY_SELECT) {
 		screenMode++;
 
 		// Clear all marks

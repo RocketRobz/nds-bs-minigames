@@ -29,19 +29,12 @@ static void restartGame(void) {
 	ball_moveLR = true;	// false = left, true = right
 }
 
-void pongGame(void) {
+void pongGame(int pressed) {
 	if (!drawnStuff) {
-		REG_POWERCNT = (u16)(POWER_LCD | POWER_2D_A | POWER_SWAP_LCDS);
-		REG_DISPCNT = MODE_FB0;
-		VRAM_A_CR = VRAM_ENABLE;
-
 		// Draw white BG
 		for (int i = 0; i < 256*192; i++) {
 			VRAM_A[i] = 0x7FFF;
 		}
-
-		consoleClear();
-		iprintf("Pong\n");
 
 		drawnStuff = true;
 	}
@@ -131,7 +124,6 @@ void pongGame(void) {
 	}
 
 	scanKeys();
-	int pressed = keysDown();
 	int held = keysHeld();
 
 	// Control left paddle
@@ -154,11 +146,7 @@ void pongGame(void) {
 		if (rightpaddle_yPos >= 156) rightpaddle_yPos = 156;
 	}*/
 
-	if (pressed & KEY_L) {
-		screenMode--;
-		restartGame();
-		drawnStuff = false;
-	} else if (pressed & KEY_R) {
+	if (pressed & KEY_SELECT) {
 		screenMode++;
 		restartGame();
 		drawnStuff = false;
