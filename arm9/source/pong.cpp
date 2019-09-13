@@ -6,6 +6,7 @@ Loading pong
 #include <stdio.h>
 
 extern int screenMode;
+extern void fadeOut(void);
 
 static bool drawnStuff = false;
 
@@ -147,6 +148,7 @@ void pongGame(int pressed) {
 	}*/
 
 	if (pressed & KEY_SELECT) {
+		fadeOut();
 		screenMode++;
 		restartGame();
 		drawnStuff = false;

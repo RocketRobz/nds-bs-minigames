@@ -6,6 +6,7 @@ Loading Tic-Tac-Toe
 #include <stdio.h>
 
 extern int screenMode;
+extern void fadeOut(void);
 
 static bool drawnStuff = false;
 
@@ -306,13 +307,13 @@ void ticTacToe(int pressed) {
 	}
 
 	if (pressed & KEY_SELECT) {
+		fadeOut();
 		screenMode++;
+		ttt_highlighted = 0;
 
 		// Clear all marks
 		drawnStuff = false;
 		for (int i = 0; i < 9; i++) ttt_selected[i] = 0;
-
-		drawnStuff = false;
 	}
 
 	if (ttt_highlighted == 0) {
